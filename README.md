@@ -1,5 +1,5 @@
 # TrackMPD
-
+# Version optimized by Simon Francheo
 
 TrackMPD is a three-dimensional particle-tracking model for the transport of marine plastic debris in oceans and coastal systems. The power of TrackMPD lies in: (1) its compatibility with diverse formats of current-velocity inputs; and (2) its ability to extend the Lagrangian modelling of advection-diffusion by adding more-complex and realistic particle behaviours and physical processes, which can either be included or excluded depending on the application. At present, TrackMPD can include beaching, washing-off, sinking, deposition, resuspension, and bed load. In particular, sinking, deposition and resuspension depend on particle behaviour, which relies on the particle density, size, shape, fouling state, and degradation state. The model can incorporate new processes and behaviours, and it is possible to easily modify the implementation of the already existing ones with new experimental findings or particular applications.
 
