@@ -50,8 +50,8 @@ NTimeStamps = data.NSTEPS;
 %% Read and save the Grid info
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-x = data.XYZ(1:NumGridPts,1); %1st layer (Superfície)
-y = data.XYZ(1:NumGridPts,2); %1st layer (Superfície)  
+x = data.XYZ(1:NumGridPts,1); %1st layer (Superfï¿½cie)
+y = data.XYZ(1:NumGridPts,2); %1st layer (Superfï¿½cie)  
 
 
 %Define boundaries of the new grid
@@ -108,6 +108,13 @@ fprintf('saving timestamps\n');
 % Read variables (NumGridPts,layer)
 data_t=data;
 
+disp(' ')
+disp('WARNING !! ')
+disp('CHECK THAT THE VARIABLES ARE PRESENT IN THE MODEL OUTPUT FILE AT THE RIGHT POSITIONS !!')
+disp('VARIABLES: DEPTH UU VV KVV RHO etc.')
+disp('OR CHANGE transformTELEMACinputs_3D_1Grid.m')
+disp(' ')
+
 for t = 1:NTimeStamps 
  
     % Open data for each time step. data_t is updated each time
@@ -118,8 +125,8 @@ for t = 1:NTimeStamps
         DEPTH(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),1);
         UU(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),2);   %velocities units = 'm/s'
         VV(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),3);
-%        KVV(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),7);
-%	      RHO(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),4);
+        try KVV(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),7); end
+	    try RHO(:,lv,t) = data_t.RESULT(NumGridPts*(numlvl-lv)+1:NumGridPts*(numlvl+1-lv),4); end
     end
     
 end
@@ -145,7 +152,8 @@ for i=1:NTimeStamps
     v=nan(numlat,numlon,numlvl);
     w=nan(numlat,numlon,numlvl);
     E=nan(numlat,numlon);
-    
+    kv=nan(numlat,numlon,numlvl);
+
     % 3D variables
     % Bilinear interpolation generates values everywhere because there is
     % no grid cell outside of the domain for unstructured meshes => No NaN in interpolated values 
@@ -161,8 +169,10 @@ for i=1:NTimeStamps
         %Vaux(isnan(Vaux))=0; 
         v(:,:,j)=Vaux;
         
-        KVaux=griddata(x,y,KVV(:,j,i),Lon_matrix,Lat_matrix,'linear'); % Interpolation of KV in the new grid
-        kv(:,:,j)=KVaux;
+        if exist('KVV', 'var')
+            KVaux=griddata(x,y,KVV(:,j,i),Lon_matrix,Lat_matrix,'linear'); % Interpolation of KV in the new grid
+            kv(:,:,j)=KVaux;
+        end
 	
 %        RHOaux=griddata(x,y,RHO(:,j,i),Lon_matrix,Lat_matrix,'linear'); % Interpolation of RHO in the new grid
 %        rho(:,:,j)=RHOaux;
