@@ -21,8 +21,14 @@ disp('running TrackMPD...')
 % trajectory, particles, domain and grid
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Configuration
-conf=feval(conf_name);
+% Configuration : chosing wether the argument is the configuration file name or allready a configuration structure
+if ischar(conf_name) || isstring(conf_name)
+    conf = feval(conf_name);
+elseif isstruct(conf_name)
+    conf = conf_name;
+else
+    error('!! First argument must be the name of de file OR a configuration structure. !!');
+end
 
 % Trajectory info
 ReleaseTime=conf.Traj.ReleaseTime; % Initial drifters release date
@@ -49,6 +55,19 @@ pZ  =  3;               % Particle Z-coordinate
 parfile = conf.Data.ParticlesFile;
 
 M = dlmread(parfile,',',0,0);
+
+% 
+if nargin > 1 && ~isempty(varargin{1})
+    indices_particules = varargin{1};
+    M = M(indices_particules, :);
+    
+    % 2ème argument (optionnel) numéro du noeud pour renommer le fichier de sortie
+    if nargin > 2
+        id_Node = varargin{2};
+        conf.Traj.ScenarioName = sprintf('%s_Node%d', conf.Traj.ScenarioName, id_Node);
+    end
+end
+
 par(:,pX)=M(:,1); % Create variable "par" with particles information
 par(:,pY)=M(:,2);
 par(:,pZ)=M(:,3);
